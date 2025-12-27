@@ -12,4 +12,4 @@ function(on_posix)
     message(STATUS "Configuring for a POSIX platform")
 endfunction(on_posix)
 
-run_on_posix(on_posix)
+pillar_run_on_posix(on_posix)
