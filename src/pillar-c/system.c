@@ -30,7 +30,7 @@ struct Pillar_Status pillar_system_map(struct Pillar_Layout layout,
   if (!pillar_is_aligned(layout.alignment, pgalign))
     return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_STATUS_UNALIGNED);
 
-  pil_usize total = pillar_align_up(layout.size, pgalign);
+  pil_usize total = layout.size + layout.alignment;
 
 #ifdef PILLAR_IS_POSIX
   pil_u8 *ptr =
@@ -42,6 +42,17 @@ struct Pillar_Status pillar_system_map(struct Pillar_Layout layout,
   pil_uptr aligned_addr = pillar_align_up(addr, layout.alignment);
   ptr = (pil_u8 *)aligned_addr;
 
+  pil_usize prefix = aligned_addr - addr;
+  if (prefix > 0) {
+    munmap((void *)addr, prefix);
+  }
+
+  pil_uptr suffix_start = aligned_addr + layout.size;
+  pil_usize suffix_len = (addr + total) - suffix_start;
+  if (suffix_len > 0) {
+    munmap((void *)suffix_start, suffix_len);
+  }
+
   *out = ptr;
   return pillar_status_ok();
 #else
@@ -52,8 +63,11 @@ struct Pillar_Status pillar_system_map(struct Pillar_Layout layout,
 struct Pillar_Status pillar_system_unmap(struct Pillar_Layout layout,
                                          pil_u8 *ptr) {
   const pil_usize pgalign = pillar_alignment_for(pillar_system_pgsize());
-  pil_uptr addr = (pil_uptr)ptr;
-  if (!pillar_is_aligned(addr, pgalign))
+
+  if (!pillar_is_aligned(layout.size, pgalign))
+    return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_STATUS_UNALIGNED);
+
+  if (!pillar_is_aligned((pil_uptr)ptr, pgalign))
     return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_STATUS_UNALIGNED);
 
 #ifdef PILLAR_IS_POSIX
