@@ -10,14 +10,7 @@ enum Pillar_Alignment pillar_alignment_map(pil_usize align) {
 }
 
 enum Pillar_Alignment pillar_alignment_for(pil_usize size) {
-  if (size <= PILLAR_ONE)
-    return PILLAR_ALIGNMENT_1SHL0;
-
-  pil_usize x = size - PILLAR_ONE;
-  pil_usize shift =
-      PILLAR_BITS(pil_usize) - PILLAR_ONE - pillar_leading_zeros(x);
-
-  pil_usize alignment = PILLAR_ONE << shift;
+  pil_usize alignment = pillar_npow2(size);
 
   if (alignment > PILLAR_ALIGNMENT_1SHL4)
     return PILLAR_ALIGNMENT_1SHL4;

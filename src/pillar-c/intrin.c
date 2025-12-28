@@ -73,3 +73,30 @@ pil_usize pillar_popcount(pil_usize value) {
 
   return pillar_popcount_fallback(value);
 }
+
+pil_usize pillar_npow2(pil_usize value) {
+  if (value <= PILLAR_ONE)
+    return PILLAR_ONE;
+
+  pil_usize leading_zeros = pillar_leading_zeros(value - PILLAR_ONE);
+  pil_usize bits = PILLAR_BITS(pil_usize);
+  pil_usize shift = bits - leading_zeros;
+
+  return PILLAR_ONE << shift;
+}
+
+pil_usize pillar_ppow2(pil_usize value) {
+  if (value == PILLAR_ZERO)
+    return PILLAR_ONE;
+
+  pil_usize leading_zeros = pillar_leading_zeros(value);
+  pil_usize bits = PILLAR_BITS(pil_usize);
+  pil_usize shift = bits - leading_zeros;
+
+  pil_usize pow2 = PILLAR_ONE << shift;
+
+  if (pow2 == value)
+    return pow2;
+
+  return pow2 << PILLAR_ONE;
+}
