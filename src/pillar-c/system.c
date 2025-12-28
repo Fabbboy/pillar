@@ -51,6 +51,11 @@ struct Pillar_Status pillar_system_map(struct Pillar_Layout layout,
 
 struct Pillar_Status pillar_system_unmap(struct Pillar_Layout layout,
                                          pil_u8 *ptr) {
+  const pil_usize pgalign = pillar_alignment_for(pillar_system_pgsize());
+  pil_uptr addr = (pil_uptr)ptr;
+  if (!pillar_is_aligned(addr, pgalign))
+    return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_STATUS_UNALIGNED);
+
 #ifdef PILLAR_IS_POSIX
   munmap(ptr, layout.size);
   return pillar_status_ok();
