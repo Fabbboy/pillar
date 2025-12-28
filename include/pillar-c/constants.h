@@ -1,15 +1,13 @@
 #pragma once
 
+#include <limits.h>
+
 enum {
   PILLAR_ZERO = 0,
   PILLAR_ONE,
   PILLAR_TWO,
   PILLAR_THREE,
   PILLAR_FOUR,
-  PILLAR_FIVE,
-  PILLAR_SIX,
-  PILLAR_SEVEN,
-  PILLAR_EIGHT,
-  PILLAR_NINE,
-  PILLAR_TEN,
 };
+
+#define PILLAR_BITS(TYPE) (sizeof(TYPE) * CHAR_BIT)

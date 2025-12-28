@@ -34,6 +34,8 @@ include_directories(${CMAKE_BINARY_DIR})
 
 set(PILLAR_C_SOURCES
     src/pillar-c/status.c
+    src/pillar-c/intrin.c
+    src/pillar-c/types.c
 )
 
 set(PILLAR_CXX_SOURCES

@@ -3,6 +3,7 @@
 #include "pillar-c/constants.h"
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef uint8_t pil_u8;
 typedef uint16_t pil_u16;
@@ -22,18 +23,19 @@ typedef intptr_t pil_iptr;
 typedef size_t pil_usize;
 
 enum Pillar_Alignment {
-  PILLAR_ALIGNMENT_1SHL0 = PILLAR_ONE << PILLAR_ZERO,
-  PILLAR_ALIGNMENT_1SHL1 = PILLAR_ONE << PILLAR_ONE,
-  PILLAR_ALIGNMENT_1SHL2 = PILLAR_ONE << PILLAR_TWO,
-  PILLAR_ALIGNMENT_1SHL3 = PILLAR_ONE << PILLAR_THREE,
-  PILLAR_ALIGNMENT_1SHL4 = PILLAR_ONE << PILLAR_FOUR,
-  PILLAR_ALIGNMENT_1SHL5 = PILLAR_ONE << PILLAR_FIVE,
-  PILLAR_ALIGNMENT_1SHL6 = PILLAR_ONE << PILLAR_SIX,
-  PILLAR_ALIGNMENT_1SHL7 = PILLAR_ONE << PILLAR_SEVEN,
-  PILLAR_ALIGNMENT_1SHL8 = PILLAR_ONE << PILLAR_EIGHT,
-  PILLAR_ALIGNMENT_1SHL9 = PILLAR_ONE << PILLAR_NINE,
-  PILLAR_ALIGNMENT_1SHL10 = PILLAR_ONE << PILLAR_TEN,
+  PILLAR_ALIGNMENT_1SHL0 = PILLAR_ONE << PILLAR_ZERO,  // 1
+  PILLAR_ALIGNMENT_1SHL1 = PILLAR_ONE << PILLAR_ONE,   // 2
+  PILLAR_ALIGNMENT_1SHL2 = PILLAR_ONE << PILLAR_TWO,   // 4
+  PILLAR_ALIGNMENT_1SHL3 = PILLAR_ONE << PILLAR_THREE, // 8
+  PILLAR_ALIGNMENT_1SHL4 = PILLAR_ONE << PILLAR_FOUR,  // 16
 };
+
+enum Pillar_Alignment pillar_alignment_map(pil_usize align);
+enum Pillar_Alignment pillar_alignment_for(pil_usize size);
+
+pil_usize pillar_align_up(pil_usize value, enum Pillar_Alignment alignment);
+pil_usize pillar_align_down(pil_usize value, enum Pillar_Alignment alignment);
+bool pillar_is_aligned(pil_usize value, enum Pillar_Alignment alignment);
 
 struct Pillar_Layout {
   pil_u64 size;
@@ -41,7 +43,7 @@ struct Pillar_Layout {
 };
 
 #define PILLAR_LAYOUT(T)                                                       \
-  (struct Pillar_Layout) { sizeof(T), _Alignof(T) }
+  (struct Pillar_Layout) { sizeof(T), pillar_alignment_map(_Alignof(T)) }
 
 #define PILLAR_LAYOUT_ARRAY(T, N)                                              \
-  (struct Pillar_Layout) { sizeof(T) * (N), _Alignof(T) }
+  (struct Pillar_Layout) { sizeof(T) * (N), pillar_alignment_map(_Alignof(T)) }
