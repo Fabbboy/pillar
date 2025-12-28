@@ -27,7 +27,7 @@ struct Pillar_Status pillar_system_map(struct Pillar_Layout layout,
   if (!pillar_is_aligned(layout.size, pgalignment))
     return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_STATUS_UNALIGNED);
 
-  if (!pillar_is_aligned(layout.size, pgalignment))
+  if (!pillar_is_aligned(layout.alignment, pgalignment))
     return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_STATUS_UNALIGNED);
 
   pil_usize total = pillar_align_up(layout.size, pgalignment);
@@ -37,6 +37,10 @@ struct Pillar_Status pillar_system_map(struct Pillar_Layout layout,
       mmap(NULL, total, PILLAR_PAGE_PROT, PILLAR_PAGE_FLAGS, PILLAR_INVFD, 0);
   if (ptr == MAP_FAILED)
     return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_STATUS_OOM);
+
+  pil_uptr addr = (pil_uptr)ptr;
+  pil_uptr aligned_addr = pillar_align_up(addr, layout.alignment);
+  ptr = (pil_u8 *)aligned_addr;
 
   *out = ptr;
   return pillar_status_ok();
