@@ -10,6 +10,12 @@ pillar_detect_platform()
 pillar_detect_bits()
 pillar_detect_compiler()
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS OFF)
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -21,3 +27,22 @@ configure_file(
     ${PILLAR_CONFIG_TEMPLATE}
     ${PILLAR_CONFIG_TARGET}
 )
+
+set(PILLAR_INCLUDE "${CMAKE_SOURCE_DIR}/include")
+include_directories(${PILLAR_INCLUDE})
+include_directories(${CMAKE_BINARY_DIR})
+
+set(PILLAR_C_SOURCES
+    src/pillar-c/status.c
+)
+
+set(PILLAR_CXX_SOURCES
+    src/pillar/raw/vec.cc
+)
+
+add_library(pillar-c STATIC ${PILLAR_C_SOURCES})
+set_target_properties(pillar-c PROPERTIES LINKER_LANGUAGE C)
+
+add_library(pillar-cxx STATIC ${PILLAR_CXX_SOURCES})
+set_target_properties(pillar-cxx PROPERTIES LINKER_LANGUAGE CXX)
+target_link_libraries(pillar-cxx pillar-c)
