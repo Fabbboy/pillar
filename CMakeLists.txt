@@ -1,10 +1,14 @@
 cmake_minimum_required(VERSION 4.2)
-project(pillar CXX)
+project(pillar C CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(PillarPlatform)
 include(PillarBits)
 include(PillarCompiler)
+
+pillar_detect_platform()
+pillar_detect_bits()
+pillar_detect_compiler()
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
