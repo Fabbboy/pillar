@@ -36,6 +36,7 @@ set(PILLAR_C_SOURCES
     src/pillar-c/status.c
     src/pillar-c/intrin.c
     src/pillar-c/types.c
+    src/pillar-c/allocator.c
 )
 
 set(PILLAR_CXX_SOURCES
