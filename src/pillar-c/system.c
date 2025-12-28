@@ -23,14 +23,14 @@ pil_usize pillar_system_pgsize(void) {
 
 struct Pillar_Status pillar_system_map(struct Pillar_Layout layout,
                                        pil_u8 **out) {
-  const pil_usize pgalignment = pillar_alignment_for(pillar_system_pgsize());
-  if (!pillar_is_aligned(layout.size, pgalignment))
+  const pil_usize pgalign = pillar_alignment_for(pillar_system_pgsize());
+  if (!pillar_is_aligned(layout.size, pgalign))
     return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_STATUS_UNALIGNED);
 
-  if (!pillar_is_aligned(layout.alignment, pgalignment))
+  if (!pillar_is_aligned(layout.alignment, pgalign))
     return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_STATUS_UNALIGNED);
 
-  pil_usize total = pillar_align_up(layout.size, pgalignment);
+  pil_usize total = pillar_align_up(layout.size, pgalign);
 
 #ifdef PILLAR_IS_POSIX
   pil_u8 *ptr =
