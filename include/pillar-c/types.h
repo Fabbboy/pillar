@@ -47,3 +47,6 @@ struct Pillar_Layout {
 
 #define PILLAR_LAYOUT_ARRAY(T, N)                                              \
   (struct Pillar_Layout) { sizeof(T) * (N), pillar_alignment_map(_Alignof(T)) }
+
+#define PILLAR_LAYOUT_COPY(LAYOUT, SIZE)                                       \
+  (struct Pillar_Layout) { SIZE, (LAYOUT).alignment }

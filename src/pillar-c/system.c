@@ -25,10 +25,10 @@ struct Pillar_Status pillar_system_map(struct Pillar_Layout layout,
                                        pil_u8 **out) {
   const pil_usize pgalign = pillar_alignment_for(pillar_system_pgsize());
   if (!pillar_is_aligned(layout.size, pgalign))
-    return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_STATUS_UNALIGNED);
+    return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_CODE_UNALIGNED);
 
   if (!pillar_is_aligned(layout.alignment, pgalign))
-    return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_STATUS_UNALIGNED);
+    return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_CODE_UNALIGNED);
 
   pil_usize total = layout.size + layout.alignment;
 
@@ -36,7 +36,7 @@ struct Pillar_Status pillar_system_map(struct Pillar_Layout layout,
   pil_u8 *ptr =
       mmap(NULL, total, PILLAR_PAGE_PROT, PILLAR_PAGE_FLAGS, PILLAR_INVFD, 0);
   if (ptr == MAP_FAILED)
-    return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_STATUS_OOM);
+    return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_CODE_OOM);
 
   pil_uptr addr = (pil_uptr)ptr;
   pil_uptr aligned_addr = pillar_align_up(addr, layout.alignment);
@@ -65,14 +65,15 @@ struct Pillar_Status pillar_system_unmap(struct Pillar_Layout layout,
   const pil_usize pgalign = pillar_alignment_for(pillar_system_pgsize());
 
   if (!pillar_is_aligned(layout.size, pgalign))
-    return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_STATUS_UNALIGNED);
+    return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_CODE_UNALIGNED);
 
   if (!pillar_is_aligned((pil_uptr)ptr, pgalign))
-    return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_STATUS_UNALIGNED);
+    return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_CODE_UNALIGNED);
 
 #ifdef PILLAR_IS_POSIX
   munmap(ptr, layout.size);
   return pillar_status_ok();
 #endif
-  return pillar_status_init(PILLAR_SYSTEM_DOMAIN, PILLAR_SYSTEM_UNSUPPORTED);
+  return pillar_status_init(PILLAR_SYSTEM_DOMAIN,
+                            PILLAR_SYSTEM_CODE_UNSUPPORTED);
 }

@@ -3,6 +3,7 @@
 #include "pillar-c/status.h"
 #include "pillar-c/types.h"
 #include <assert.h>
+#include <stdbool.h>
 
 enum Pillar_AllocatorCode {
   PILLAR_ALLOCATOR_CODE_OOM = PILLAR_STATUS_START,
@@ -35,3 +36,8 @@ struct Pillar_Status pillar_allocator_alloc(struct Pillar_Allocator *allocator,
 struct Pillar_Status
 pillar_allocator_dealloc(struct Pillar_Allocator *allocator, pil_u8 *ptr,
                          struct Pillar_Layout layout);
+
+static inline bool
+pillar_allocator_validate(struct Pillar_Allocator *allocator) {
+  return allocator && allocator->alloc && allocator->dealloc;
+}

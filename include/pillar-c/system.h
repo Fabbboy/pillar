@@ -3,10 +3,10 @@
 #include "pillar-c/status.h"
 #include "pillar-c/types.h"
 
-enum Pillar_SystemStatus {
-  PILLAR_SYSTEM_STATUS_OOM = PILLAR_STATUS_START,
-  PILLAR_SYSTEM_STATUS_UNALIGNED,
-  PILLAR_SYSTEM_UNSUPPORTED,
+enum Pillar_SystemCode {
+  PILLAR_SYSTEM_CODE_OOM = PILLAR_STATUS_START,
+  PILLAR_SYSTEM_CODE_UNALIGNED,
+  PILLAR_SYSTEM_CODE_UNSUPPORTED,
 };
 
 #define PILLAR_SYSTEM_STATUS(err) pillar_status_init(PILLAR_SYSTEM_DOMAIN, err)

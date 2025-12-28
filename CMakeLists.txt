@@ -38,6 +38,7 @@ set(PILLAR_C_SOURCES
     src/pillar-c/types.c
     src/pillar-c/allocator.c
     src/pillar-c/system.c
+    src/pillar-c/vec.c
 )
 
 set(PILLAR_CXX_SOURCES

@@ -5,6 +5,7 @@
 
 const pil_u16 PILLAR_SYSTEM_DOMAIN = __LINE__;
 const pil_u16 PILLAR_ALLOCATOR_DOMAIN = __LINE__;
+const pil_u16 PILLAR_VEC_DOMAIN = __LINE__;
 
 enum {
   PILLAR_STATUS_OK = PILLAR_ZERO,
@@ -23,3 +24,6 @@ _Static_assert(PILLAR_STATUS_START == 1, "PILLAR_STATUS_START must be one");
 
 struct Pillar_Status pillar_status_ok();
 struct Pillar_Status pillar_status_init(pil_u16 domain, pil_u16 code);
+static inline bool pillar_status_is_ok(struct Pillar_Status status) {
+  return status.code == PILLAR_STATUS_OK;
+}
