@@ -42,7 +42,7 @@ set(PILLAR_C_SOURCES
 )
 
 set(PILLAR_CXX_SOURCES
-    src/pillar/raw/vec.cc
+    src/pillar/placeholder.cc
 )
 
 add_library(pillar-c STATIC ${PILLAR_C_SOURCES})

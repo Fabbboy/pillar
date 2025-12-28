@@ -14,7 +14,7 @@ enum Pillar_VecCode {
 
 #define PILLAR_VEC_STATUS(err) pillar_status_init(PILLAR_VEC_DOMAIN, err)
 
-struct Pillar_Vec {
+struct Pillar_RawVec {
   pil_u8 *data;
   pil_usize len;
   pil_usize cap;
@@ -22,18 +22,24 @@ struct Pillar_Vec {
   struct Pillar_Allocator allocator;
 };
 
-#define PILLAR_VEC_INIT(ALLOCATOR, LAYOUT)                                     \
-  (struct Pillar_Vec) { NULL, PILLAR_ZERO, PILLAR_ZERO, LAYOUT, ALLOCATOR }
+#define PILLAR_RAW_VEC_INIT(ALLOCATOR, LAYOUT)                                 \
+  (struct Pillar_RawVec) { NULL, PILLAR_ZERO, PILLAR_ZERO, LAYOUT, ALLOCATOR }
 
-struct Pillar_Status pillar_vec_init_with(struct Pillar_Vec *vec,
-                                          struct Pillar_Layout layout,
-                                          struct Pillar_Allocator allocator,
-                                          pil_usize cap);
-struct Pillar_Status pillar_vec_deinit(struct Pillar_Vec *vec);
+struct Pillar_Status pillar_raw_vec_init_with(struct Pillar_RawVec *vec,
+                                              struct Pillar_Layout layout,
+                                              struct Pillar_Allocator allocator,
+                                              pil_usize cap);
+struct Pillar_Status pillar_raw_vec_deinit(struct Pillar_RawVec *vec);
 
-struct Pillar_Status pillar_vec_append(struct Pillar_Vec *vec, pil_u8 *item);
-struct Pillar_Status pillar_vec_pop(struct Pillar_Vec *vec, pil_u8 *out);
-struct Pillar_Status pillar_vec_prepend(struct Pillar_Vec *vec, pil_u8 *item);
-struct Pillar_Status pillar_vec_shift(struct Pillar_Vec *vec, pil_u8 *out);
-struct Pillar_Status pillar_vec_grow(struct Pillar_Vec *vec, pil_usize new_cap);
-struct Pillar_Status pillar_vec_shrink(struct Pillar_Vec *vec);
+struct Pillar_Status pillar_raw_vec_append(struct Pillar_RawVec *vec,
+                                           pil_u8 *item);
+struct Pillar_Status pillar_raw_vec_pop(struct Pillar_RawVec *vec, pil_u8 *out);
+struct Pillar_Status pillar_raw_vec_prepend(struct Pillar_RawVec *vec,
+                                            pil_u8 *item);
+struct Pillar_Status pillar_raw_vec_shift(struct Pillar_RawVec *vec,
+                                          pil_u8 *out);
+struct Pillar_Status pillar_raw_vec_grow(struct Pillar_RawVec *vec,
+                                         pil_usize new_cap);
+struct Pillar_Status pillar_raw_vec_shrink(struct Pillar_RawVec *vec);
+struct Pillar_Status pillar_raw_vec_at(struct Pillar_RawVec *vec,
+                                       pil_usize index, pil_u8 **out);

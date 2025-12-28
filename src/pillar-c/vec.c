@@ -3,27 +3,29 @@
 #include <pillar-c/vec.h>
 #include <string.h>
 
-static inline pil_usize pillar_vec_offset_at(const struct Pillar_Vec *vec,
-                                             pil_usize index) {
+static inline pil_usize pillar_raw_vec_offset(const struct Pillar_RawVec *vec,
+                                              pil_usize index) {
   return index * vec->layout.size;
 }
 
-static inline pil_usize pillar_vec_cap_bytes(const struct Pillar_Vec *vec) {
+static inline pil_usize
+pillar_raw_vec_cap_bytes(const struct Pillar_RawVec *vec) {
   return vec->cap * vec->layout.size;
 }
 
-static inline pil_usize pillar_vec_len_bytes(const struct Pillar_Vec *vec) {
+static inline pil_usize
+pillar_raw_vec_len_bytes(const struct Pillar_RawVec *vec) {
   return vec->len * vec->layout.size;
 }
 
-static inline pil_usize pillar_vec_new_cap(pil_usize desired_cap) {
+static inline pil_usize pillar_raw_vec_new_cap(pil_usize desired_cap) {
   return desired_cap > PILLAR_VEC_MIN ? desired_cap : PILLAR_VEC_MIN;
 }
 
-struct Pillar_Status pillar_vec_init_with(struct Pillar_Vec *vec,
-                                          struct Pillar_Layout layout,
-                                          struct Pillar_Allocator allocator,
-                                          pil_usize cap) {
+struct Pillar_Status pillar_raw_vec_init_with(struct Pillar_RawVec *vec,
+                                              struct Pillar_Layout layout,
+                                              struct Pillar_Allocator allocator,
+                                              pil_usize cap) {
   if (!vec || !pillar_allocator_validate(&allocator))
     return PILLAR_VEC_STATUS(PILLAR_VEC_CODE_INVALID_ARGUMENT);
 
@@ -42,15 +44,15 @@ struct Pillar_Status pillar_vec_init_with(struct Pillar_Vec *vec,
   return pillar_status_ok();
 }
 
-struct Pillar_Status pillar_vec_deinit(struct Pillar_Vec *vec) {
+struct Pillar_Status pillar_raw_vec_deinit(struct Pillar_RawVec *vec) {
   if (!vec)
     return PILLAR_VEC_STATUS(PILLAR_VEC_CODE_INVALID_ARGUMENT);
 
   return pillar_allocator_dealloc(&vec->allocator, vec->data, vec->layout);
 }
 
-struct Pillar_Status pillar_vec_grow(struct Pillar_Vec *vec,
-                                     pil_usize new_cap) {
+struct Pillar_Status pillar_raw_vec_grow(struct Pillar_RawVec *vec,
+                                         pil_usize new_cap) {
   if (!vec)
     return PILLAR_VEC_STATUS(PILLAR_VEC_CODE_INVALID_ARGUMENT);
 
@@ -67,10 +69,10 @@ struct Pillar_Status pillar_vec_grow(struct Pillar_Vec *vec,
   if (!pillar_status_is_ok(status))
     return status;
 
-  pil_usize len_bytes = pillar_vec_len_bytes(vec);
+  pil_usize len_bytes = pillar_raw_vec_len_bytes(vec);
   memcpy(new_data, vec->data, len_bytes);
 
-  pil_usize old_cap_bytes = pillar_vec_cap_bytes(vec);
+  pil_usize old_cap_bytes = pillar_raw_vec_cap_bytes(vec);
   struct Pillar_Layout old_layout =
       PILLAR_LAYOUT_COPY(vec->layout, old_cap_bytes);
   pillar_allocator_dealloc(&vec->allocator, vec->data, old_layout);
@@ -82,7 +84,7 @@ struct Pillar_Status pillar_vec_grow(struct Pillar_Vec *vec,
   return pillar_status_ok();
 }
 
-struct Pillar_Status pillar_vec_shrink(struct Pillar_Vec *vec) {
+struct Pillar_Status pillar_raw_vec_shrink(struct Pillar_RawVec *vec) {
   if (!vec)
     return PILLAR_VEC_STATUS(PILLAR_VEC_CODE_INVALID_ARGUMENT);
 
@@ -90,7 +92,7 @@ struct Pillar_Status pillar_vec_shrink(struct Pillar_Vec *vec) {
     return pillar_status_ok();
 
   if (vec->len == PILLAR_ZERO) {
-    pil_usize cap_bytes = pillar_vec_cap_bytes(vec);
+    pil_usize cap_bytes = pillar_raw_vec_cap_bytes(vec);
     struct Pillar_Layout old_layout =
         PILLAR_LAYOUT_COPY(vec->layout, cap_bytes);
     pillar_allocator_dealloc(&vec->allocator, vec->data, old_layout);
@@ -100,7 +102,7 @@ struct Pillar_Status pillar_vec_shrink(struct Pillar_Vec *vec) {
     return pillar_status_ok();
   }
 
-  pil_usize len_bytes = pillar_vec_len_bytes(vec);
+  pil_usize len_bytes = pillar_raw_vec_len_bytes(vec);
   struct Pillar_Layout new_layout = PILLAR_LAYOUT_COPY(vec->layout, len_bytes);
   pil_u8 *new_data;
 
@@ -111,7 +113,7 @@ struct Pillar_Status pillar_vec_shrink(struct Pillar_Vec *vec) {
 
   memcpy(new_data, vec->data, len_bytes);
 
-  pil_usize cap_bytes = pillar_vec_cap_bytes(vec);
+  pil_usize cap_bytes = pillar_raw_vec_cap_bytes(vec);
   struct Pillar_Layout old_layout = PILLAR_LAYOUT_COPY(vec->layout, cap_bytes);
   pillar_allocator_dealloc(&vec->allocator, vec->data, old_layout);
 
@@ -122,25 +124,27 @@ struct Pillar_Status pillar_vec_shrink(struct Pillar_Vec *vec) {
   return pillar_status_ok();
 }
 
-struct Pillar_Status pillar_vec_append(struct Pillar_Vec *vec, pil_u8 *item) {
+struct Pillar_Status pillar_raw_vec_append(struct Pillar_RawVec *vec,
+                                           pil_u8 *item) {
   if (!vec || !item)
     return PILLAR_VEC_STATUS(PILLAR_VEC_CODE_INVALID_ARGUMENT);
 
   if (vec->len == vec->cap) {
-    pil_usize new_cap = pillar_vec_new_cap(vec->cap * PILLAR_VEC_GROWTH);
-    struct Pillar_Status status = pillar_vec_grow(vec, new_cap);
+    pil_usize new_cap = pillar_raw_vec_new_cap(vec->cap * PILLAR_VEC_GROWTH);
+    struct Pillar_Status status = pillar_raw_vec_grow(vec, new_cap);
     if (!pillar_status_is_ok(status))
       return status;
   }
 
-  pil_usize offset = pillar_vec_offset_at(vec, vec->len);
+  pil_usize offset = pillar_raw_vec_offset(vec, vec->len);
   memcpy(vec->data + offset, item, vec->layout.size);
   vec->len++;
 
   return pillar_status_ok();
 }
 
-struct Pillar_Status pillar_vec_pop(struct Pillar_Vec *vec, pil_u8 *out) {
+struct Pillar_Status pillar_raw_vec_pop(struct Pillar_RawVec *vec,
+                                        pil_u8 *out) {
   if (!vec || !out)
     return PILLAR_VEC_STATUS(PILLAR_VEC_CODE_INVALID_ARGUMENT);
 
@@ -148,24 +152,25 @@ struct Pillar_Status pillar_vec_pop(struct Pillar_Vec *vec, pil_u8 *out) {
     return PILLAR_VEC_STATUS(PILLAR_VEC_CODE_OUT_OF_BOUNDS);
 
   vec->len--;
-  pil_usize offset = pillar_vec_offset_at(vec, vec->len);
+  pil_usize offset = pillar_raw_vec_offset(vec, vec->len);
   memcpy(out, vec->data + offset, vec->layout.size);
 
   return pillar_status_ok();
 }
 
-struct Pillar_Status pillar_vec_prepend(struct Pillar_Vec *vec, pil_u8 *item) {
+struct Pillar_Status pillar_raw_vec_prepend(struct Pillar_RawVec *vec,
+                                            pil_u8 *item) {
   if (!vec || !item)
     return PILLAR_VEC_STATUS(PILLAR_VEC_CODE_INVALID_ARGUMENT);
 
   if (vec->len == vec->cap) {
-    pil_usize new_cap = pillar_vec_new_cap(vec->cap * PILLAR_VEC_GROWTH);
-    struct Pillar_Status status = pillar_vec_grow(vec, new_cap);
+    pil_usize new_cap = pillar_raw_vec_new_cap(vec->cap * PILLAR_VEC_GROWTH);
+    struct Pillar_Status status = pillar_raw_vec_grow(vec, new_cap);
     if (!pillar_status_is_ok(status))
       return status;
   }
 
-  pil_usize shift_bytes = pillar_vec_len_bytes(vec);
+  pil_usize shift_bytes = pillar_raw_vec_len_bytes(vec);
   memmove(vec->data + vec->layout.size, vec->data, shift_bytes);
   memcpy(vec->data, item, vec->layout.size);
   vec->len++;
@@ -173,7 +178,8 @@ struct Pillar_Status pillar_vec_prepend(struct Pillar_Vec *vec, pil_u8 *item) {
   return pillar_status_ok();
 }
 
-struct Pillar_Status pillar_vec_shift(struct Pillar_Vec *vec, pil_u8 *out) {
+struct Pillar_Status pillar_raw_vec_shift(struct Pillar_RawVec *vec,
+                                          pil_u8 *out) {
   if (!vec || !out)
     return PILLAR_VEC_STATUS(PILLAR_VEC_CODE_INVALID_ARGUMENT);
 
@@ -183,8 +189,20 @@ struct Pillar_Status pillar_vec_shift(struct Pillar_Vec *vec, pil_u8 *out) {
   memcpy(out, vec->data, vec->layout.size);
   vec->len--;
 
-  pil_usize shift_bytes = pillar_vec_len_bytes(vec);
+  pil_usize shift_bytes = pillar_raw_vec_len_bytes(vec);
   memmove(vec->data, vec->data + vec->layout.size, shift_bytes);
 
+  return pillar_status_ok();
+}
+
+struct Pillar_Status pillar_raw_vec_at(struct Pillar_RawVec *vec,
+                                       pil_usize index, pil_u8 **out) {
+  if (!vec || !out)
+    return PILLAR_VEC_STATUS(PILLAR_VEC_CODE_INVALID_ARGUMENT);
+
+  if (index >= vec->len)
+    return PILLAR_VEC_STATUS(PILLAR_VEC_CODE_OUT_OF_BOUNDS);
+
+  *out = vec->data + pillar_raw_vec_offset(vec, index);
   return pillar_status_ok();
 }
