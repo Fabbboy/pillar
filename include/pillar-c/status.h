@@ -3,6 +3,9 @@
 #include "constants.h"
 #include "types.h"
 
+const pil_u16 PILLAR_SYSTEM_DOMAIN = __LINE__;
+const pil_u16 PILLAR_ALLOCATOR_DOMAIN = __LINE__;
+
 enum {
   PILLAR_STATUS_OK = PILLAR_ZERO,
   PILLAR_STATUS_START = PILLAR_ONE,

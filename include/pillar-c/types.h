@@ -1,9 +1,9 @@
 #pragma once
 
 #include "pillar-c/constants.h"
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <stdbool.h>
 
 typedef uint8_t pil_u8;
 typedef uint16_t pil_u16;

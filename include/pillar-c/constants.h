@@ -3,6 +3,8 @@
 #include <limits.h>
 
 enum {
+  PILLAR_INVFD = -1,
+
   PILLAR_ZERO = 0,
   PILLAR_ONE,
   PILLAR_TWO,

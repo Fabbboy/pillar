@@ -4,7 +4,6 @@
 #include "pillar-c/types.h"
 #include <assert.h>
 
-const pil_u32 PILLAR_ALLOCATOR_DOMAIN = __COUNTER__;
 enum Pillar_AllocatorCode {
   PILLAR_ALLOCATOR_CODE_OOM = PILLAR_STATUS_START,
 };
@@ -28,6 +27,7 @@ struct Pillar_Allocator {
   (struct Pillar_Allocator) { ALLOC_FN, DEALLOC_FN }
 
 struct Pillar_Allocator pillar_heap_allocator(void);
+struct Pillar_Allocator pillar_page_allocator(void);
 
 struct Pillar_Status pillar_allocator_alloc(struct Pillar_Allocator *allocator,
                                             struct Pillar_Layout layout,
