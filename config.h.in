@@ -1,0 +1,13 @@
+#pragma once
+
+/* clang-format off */
+#define PILLAR_IS_LINUX @PILLAR_IS_LINUX@
+#define PILLAR_IS_POSIX @PILLAR_IS_POSIX@
+#define PILLAR_IS_MACOS @PILLAR_IS_MACOS@
+#define PILLAR_IS_BSD @PILLAR_IS_BSD@
+
+#define PILLAR_IS_WINDOWS @PILLAR_IS_WINDOWS@
+
+#define PILLAR_IS_32BIT @PILLAR_IS_32BIT@
+#define PILLAR_IS_64BIT @PILLAR_IS_64BIT@
+/* clang-format on */
