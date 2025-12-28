@@ -13,3 +13,4 @@ enum {
 };
 
 #define PILLAR_BITS(TYPE) (sizeof(TYPE) * CHAR_BIT)
+#define PILLAR_AND(value, mask) ((value) & (mask))

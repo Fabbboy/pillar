@@ -20,15 +20,15 @@ enum Pillar_Alignment pillar_alignment_for(pil_usize size) {
 
 pil_usize pillar_align_up(pil_usize value, enum Pillar_Alignment alignment) {
   pil_usize mask = alignment - PILLAR_ONE;
-  return (value + mask) & ~mask;
+  return PILLAR_AND((value + mask), ~mask);
 }
 
 pil_usize pillar_align_down(pil_usize value, enum Pillar_Alignment alignment) {
   pil_usize mask = alignment - PILLAR_ONE;
-  return value & ~mask;
+  return PILLAR_AND(value, ~mask);
 }
 
 bool pillar_is_aligned(pil_usize value, enum Pillar_Alignment alignment) {
   pil_usize mask = alignment - PILLAR_ONE;
-  return (value & mask) == PILLAR_ZERO;
+  return PILLAR_AND(value, mask) == PILLAR_ZERO;
 }

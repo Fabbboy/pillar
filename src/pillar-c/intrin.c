@@ -5,7 +5,7 @@
 
 static inline pil_usize pillar_trailing_zeros_fallback(pil_usize value) {
   pil_usize count = PILLAR_ZERO;
-  while ((value & PILLAR_ONE) == PILLAR_ZERO) {
+  while (PILLAR_AND(value, PILLAR_ONE) == PILLAR_ZERO) {
     value >>= PILLAR_ONE;
     count++;
   }
@@ -16,7 +16,7 @@ static inline pil_usize pillar_leading_zeros_fallback(pil_usize value) {
   pil_usize count = PILLAR_ZERO;
   pil_usize bits = PILLAR_BITS(pil_usize);
   pil_usize mask = (PILLAR_ONE << (bits - PILLAR_ONE));
-  while ((value & mask) == PILLAR_ZERO && count < bits) {
+  while (PILLAR_AND(value, mask) == PILLAR_ZERO && count < bits) {
     mask >>= PILLAR_ONE;
     count++;
   }
@@ -26,7 +26,7 @@ static inline pil_usize pillar_leading_zeros_fallback(pil_usize value) {
 static inline pil_usize pillar_popcount_fallback(pil_usize value) {
   pil_usize count = PILLAR_ZERO;
   while (value) {
-    count += value & PILLAR_ONE;
+    count += PILLAR_AND(value, PILLAR_ONE);
     value >>= PILLAR_ONE;
   }
   return count;
