@@ -6,49 +6,49 @@
 #include <sys/mman.h>
 #include <unistd.h>
 
-const pil_u32 PILLAR_PAGE_PROT = PROT_READ | PROT_WRITE;
-const pil_u32 PILLAR_PAGE_FLAGS = MAP_PRIVATE | MAP_ANONYMOUS;
+const Pillar_U32 PILLAR_PAGE_PROT = PROT_READ | PROT_WRITE;
+const Pillar_U32 PILLAR_PAGE_FLAGS = MAP_PRIVATE | MAP_ANONYMOUS;
 
 #else
 const pil_usize PILLAR_COMMON_PGSIZE = 4096;
 #endif
 
-pil_usize pillar_system_pgsize(void) {
+Pillar_Usize pillar_system_pgsize(void) {
 #ifdef PILLAR_IS_POSIX
-  return (pil_usize)sysconf(_SC_PAGESIZE);
+  return (Pillar_Usize)sysconf(_SC_PAGESIZE);
 #else
   return PILLAR_COMMON_PGSIZE;
 #endif
 }
 
 struct Pillar_Status pillar_system_map(struct Pillar_Layout layout,
-                                       pil_u8 **out) {
-  const pil_usize pgalign = pillar_alignment_for(pillar_system_pgsize());
+                                       Pillar_U8 **out) {
+  const Pillar_Usize pgalign = pillar_alignment_for(pillar_system_pgsize());
   if (!pillar_is_aligned(layout.size, pgalign))
     return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_CODE_UNALIGNED);
 
   if (!pillar_is_aligned(layout.alignment, pgalign))
     return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_CODE_UNALIGNED);
 
-  pil_usize total = layout.size + layout.alignment;
+  Pillar_Usize total = layout.size + layout.alignment;
 
 #ifdef PILLAR_IS_POSIX
-  pil_u8 *ptr =
+  Pillar_U8 *ptr =
       mmap(NULL, total, PILLAR_PAGE_PROT, PILLAR_PAGE_FLAGS, PILLAR_INVFD, 0);
   if (ptr == MAP_FAILED)
     return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_CODE_OOM);
 
-  pil_uptr addr = (pil_uptr)ptr;
-  pil_uptr aligned_addr = pillar_align_up(addr, layout.alignment);
-  ptr = (pil_u8 *)aligned_addr;
+  Pillar_Uptr addr = (Pillar_Uptr)ptr;
+  Pillar_Uptr aligned_addr = pillar_align_up(addr, layout.alignment);
+  ptr = (Pillar_U8 *)aligned_addr;
 
-  pil_usize prefix = aligned_addr - addr;
+  Pillar_Usize prefix = aligned_addr - addr;
   if (prefix > 0) {
     munmap((void *)addr, prefix);
   }
 
-  pil_uptr suffix_start = aligned_addr + layout.size;
-  pil_usize suffix_len = (addr + total) - suffix_start;
+  Pillar_Uptr suffix_start = aligned_addr + layout.size;
+  Pillar_Usize suffix_len = (addr + total) - suffix_start;
   if (suffix_len > 0) {
     munmap((void *)suffix_start, suffix_len);
   }
@@ -61,13 +61,13 @@ struct Pillar_Status pillar_system_map(struct Pillar_Layout layout,
 }
 
 struct Pillar_Status pillar_system_unmap(struct Pillar_Layout layout,
-                                         pil_u8 *ptr) {
-  const pil_usize pgalign = pillar_alignment_for(pillar_system_pgsize());
+                                         Pillar_U8 *ptr) {
+  const Pillar_Usize pgalign = pillar_alignment_for(pillar_system_pgsize());
 
   if (!pillar_is_aligned(layout.size, pgalign))
     return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_CODE_UNALIGNED);
 
-  if (!pillar_is_aligned((pil_uptr)ptr, pgalign))
+  if (!pillar_is_aligned((Pillar_Uptr)ptr, pgalign))
     return PILLAR_SYSTEM_STATUS(PILLAR_SYSTEM_CODE_UNALIGNED);
 
 #ifdef PILLAR_IS_POSIX

@@ -3,8 +3,8 @@
 #include "pillar-c/types.h"
 #include <pillar-c/intrin.h>
 
-static inline pil_usize pillar_trailing_zeros_fallback(pil_usize value) {
-  pil_usize count = PILLAR_ZERO;
+static inline Pillar_Usize pillar_trailing_zeros_fallback(Pillar_Usize value) {
+  Pillar_Usize count = PILLAR_ZERO;
   while (PILLAR_AND(value, PILLAR_ONE) == PILLAR_ZERO) {
     value >>= PILLAR_ONE;
     count++;
@@ -12,10 +12,10 @@ static inline pil_usize pillar_trailing_zeros_fallback(pil_usize value) {
   return count;
 }
 
-static inline pil_usize pillar_leading_zeros_fallback(pil_usize value) {
-  pil_usize count = PILLAR_ZERO;
-  pil_usize bits = PILLAR_BITS(pil_usize);
-  pil_usize mask = (PILLAR_ONE << (bits - PILLAR_ONE));
+static inline Pillar_Usize pillar_leading_zeros_fallback(Pillar_Usize value) {
+  Pillar_Usize count = PILLAR_ZERO;
+  Pillar_Usize bits = PILLAR_BITS(Pillar_Usize);
+  Pillar_Usize mask = (PILLAR_ONE << (bits - PILLAR_ONE));
   while (PILLAR_AND(value, mask) == PILLAR_ZERO && count < bits) {
     mask >>= PILLAR_ONE;
     count++;
@@ -23,8 +23,8 @@ static inline pil_usize pillar_leading_zeros_fallback(pil_usize value) {
   return count;
 }
 
-static inline pil_usize pillar_popcount_fallback(pil_usize value) {
-  pil_usize count = PILLAR_ZERO;
+static inline Pillar_Usize pillar_popcount_fallback(Pillar_Usize value) {
+  Pillar_Usize count = PILLAR_ZERO;
   while (value) {
     count += PILLAR_AND(value, PILLAR_ONE);
     value >>= PILLAR_ONE;
@@ -32,9 +32,9 @@ static inline pil_usize pillar_popcount_fallback(pil_usize value) {
   return count;
 }
 
-pil_usize pillar_trailing_zeros(pil_usize value) {
+Pillar_Usize pillar_trailing_zeros(Pillar_Usize value) {
   if (value == PILLAR_ZERO)
-    return PILLAR_BITS(pil_usize);
+    return PILLAR_BITS(Pillar_Usize);
 
 #ifdef PILLAR_IS_GNU_LIKE
 #ifdef PILLAR_IS_64BIT
@@ -47,9 +47,9 @@ pil_usize pillar_trailing_zeros(pil_usize value) {
   return pillar_trailing_zeros_fallback(value);
 }
 
-pil_usize pillar_leading_zeros(pil_usize value) {
+Pillar_Usize pillar_leading_zeros(Pillar_Usize value) {
   if (value == PILLAR_ZERO)
-    return PILLAR_BITS(pil_usize);
+    return PILLAR_BITS(Pillar_Usize);
 
 #ifdef PILLAR_IS_GNU_LIKE
 #ifdef PILLAR_IS_64BIT
@@ -62,7 +62,7 @@ pil_usize pillar_leading_zeros(pil_usize value) {
   return pillar_leading_zeros_fallback(value);
 }
 
-pil_usize pillar_popcount(pil_usize value) {
+Pillar_Usize pillar_popcount(Pillar_Usize value) {
 #ifdef PILLAR_IS_GNU_LIKE
 #ifdef PILLAR_IS_64BIT
   return __builtin_popcountll(value);
@@ -74,26 +74,26 @@ pil_usize pillar_popcount(pil_usize value) {
   return pillar_popcount_fallback(value);
 }
 
-pil_usize pillar_npow2(pil_usize value) {
+Pillar_Usize pillar_npow2(Pillar_Usize value) {
   if (value <= PILLAR_ONE)
     return PILLAR_ONE;
 
-  pil_usize leading_zeros = pillar_leading_zeros(value - PILLAR_ONE);
-  pil_usize bits = PILLAR_BITS(pil_usize);
-  pil_usize shift = bits - leading_zeros;
+  Pillar_Usize leading_zeros = pillar_leading_zeros(value - PILLAR_ONE);
+  Pillar_Usize bits = PILLAR_BITS(Pillar_Usize);
+  Pillar_Usize shift = bits - leading_zeros;
 
   return PILLAR_ONE << shift;
 }
 
-pil_usize pillar_ppow2(pil_usize value) {
+Pillar_Usize pillar_ppow2(Pillar_Usize value) {
   if (value == PILLAR_ZERO)
     return PILLAR_ONE;
 
-  pil_usize leading_zeros = pillar_leading_zeros(value);
-  pil_usize bits = PILLAR_BITS(pil_usize);
-  pil_usize shift = bits - leading_zeros;
+  Pillar_Usize leading_zeros = pillar_leading_zeros(value);
+  Pillar_Usize bits = PILLAR_BITS(Pillar_Usize);
+  Pillar_Usize shift = bits - leading_zeros;
 
-  pil_usize pow2 = PILLAR_ONE << shift;
+  Pillar_Usize pow2 = PILLAR_ONE << shift;
 
   if (pow2 == value)
     return pow2;

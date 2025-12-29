@@ -1,8 +1,8 @@
 #pragma once
 #include "pillar-c/types.h"
 
-pil_usize pillar_trailing_zeros(pil_usize value);
-pil_usize pillar_leading_zeros(pil_usize value);
-pil_usize pillar_popcount(pil_usize value);
-pil_usize pillar_npow2(pil_usize value);
-pil_usize pillar_ppow2(pil_usize value);
+Pillar_Usize pillar_trailing_zeros(Pillar_Usize value);
+Pillar_Usize pillar_leading_zeros(Pillar_Usize value);
+Pillar_Usize pillar_popcount(Pillar_Usize value);
+Pillar_Usize pillar_npow2(Pillar_Usize value);
+Pillar_Usize pillar_ppow2(Pillar_Usize value);

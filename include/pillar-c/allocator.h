@@ -13,10 +13,10 @@ struct Pillar_Allocator;
 
 typedef struct Pillar_Status (*Pillar_AllocFn)(
     struct Pillar_Allocator *allocator, struct Pillar_Layout layout,
-    pil_u8 **out);
+    Pillar_U8 **out);
 
 typedef struct Pillar_Status (*Pillar_DeallocFn)(
-    struct Pillar_Allocator *allocator, pil_u8 *ptr,
+    struct Pillar_Allocator *allocator, Pillar_U8 *ptr,
     struct Pillar_Layout layout);
 
 struct Pillar_Allocator {
@@ -32,9 +32,9 @@ struct Pillar_Allocator pillar_page_allocator(void);
 
 struct Pillar_Status pillar_allocator_alloc(struct Pillar_Allocator *allocator,
                                             struct Pillar_Layout layout,
-                                            pil_u8 **out);
+                                            Pillar_U8 **out);
 struct Pillar_Status
-pillar_allocator_dealloc(struct Pillar_Allocator *allocator, pil_u8 *ptr,
+pillar_allocator_dealloc(struct Pillar_Allocator *allocator, Pillar_U8 *ptr,
                          struct Pillar_Layout layout);
 
 static inline bool

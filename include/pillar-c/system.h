@@ -11,8 +11,8 @@ enum Pillar_SystemCode {
 
 #define PILLAR_SYSTEM_STATUS(err) pillar_status_init(PILLAR_SYSTEM_DOMAIN, err)
 
-pil_usize pillar_system_pgsize(void);
+Pillar_Usize pillar_system_pgsize(void);
 struct Pillar_Status pillar_system_map(struct Pillar_Layout layout,
-                                       pil_u8 **out);
+                                       Pillar_U8 **out);
 struct Pillar_Status pillar_system_unmap(struct Pillar_Layout layout,
-                                         pil_u8 *ptr);
+                                         Pillar_U8 *ptr);

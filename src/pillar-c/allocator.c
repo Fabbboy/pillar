@@ -6,10 +6,10 @@
 
 static struct Pillar_Status
 pillar_heap_alloc(struct Pillar_Allocator *allocator,
-                  struct Pillar_Layout layout, pil_u8 **out) {
+                  struct Pillar_Layout layout, Pillar_U8 **out) {
   (void)allocator;
 
-  pil_u8 *ptr = (pil_u8 *)aligned_alloc(layout.alignment, layout.size);
+  Pillar_U8 *ptr = (Pillar_U8 *)aligned_alloc(layout.alignment, layout.size);
   if (!ptr)
     return pillar_status_init(PILLAR_ALLOCATOR_DOMAIN,
                               PILLAR_ALLOCATOR_CODE_OOM);
@@ -19,7 +19,7 @@ pillar_heap_alloc(struct Pillar_Allocator *allocator,
 }
 
 static struct Pillar_Status
-pillar_heap_dealloc(struct Pillar_Allocator *allocator, pil_u8 *ptr,
+pillar_heap_dealloc(struct Pillar_Allocator *allocator, Pillar_U8 *ptr,
                     struct Pillar_Layout layout) {
   (void)allocator;
   (void)layout;
@@ -30,13 +30,13 @@ pillar_heap_dealloc(struct Pillar_Allocator *allocator, pil_u8 *ptr,
 
 static struct Pillar_Status
 pillar_page_alloc(struct Pillar_Allocator *allocator,
-                  struct Pillar_Layout layout, pil_u8 **out) {
+                  struct Pillar_Layout layout, Pillar_U8 **out) {
   (void)allocator;
   return pillar_system_map(layout, out);
 }
 
 static struct Pillar_Status
-pillar_page_dealloc(struct Pillar_Allocator *allocator, pil_u8 *ptr,
+pillar_page_dealloc(struct Pillar_Allocator *allocator, Pillar_U8 *ptr,
                     struct Pillar_Layout layout) {
   (void)allocator;
   return pillar_system_unmap(layout, ptr);
@@ -52,12 +52,12 @@ struct Pillar_Allocator pillar_page_allocator(void) {
 
 struct Pillar_Status pillar_allocator_alloc(struct Pillar_Allocator *allocator,
                                             struct Pillar_Layout layout,
-                                            pil_u8 **out) {
+                                            Pillar_U8 **out) {
   assert(allocator && allocator->alloc);
   return allocator->alloc(allocator, layout, out);
 }
 struct Pillar_Status
-pillar_allocator_dealloc(struct Pillar_Allocator *allocator, pil_u8 *ptr,
+pillar_allocator_dealloc(struct Pillar_Allocator *allocator, Pillar_U8 *ptr,
                          struct Pillar_Layout layout) {
   assert(allocator && allocator->dealloc);
   return allocator->dealloc(allocator, ptr, layout);

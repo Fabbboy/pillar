@@ -5,22 +5,22 @@
 #include <stddef.h>
 #include <stdint.h>
 
-typedef uint8_t pil_u8;
-typedef uint16_t pil_u16;
-typedef uint32_t pil_u32;
-typedef uint64_t pil_u64;
+typedef uint8_t Pillar_U8;
+typedef uint16_t Pillar_U16;
+typedef uint32_t Pillar_U32;
+typedef uint64_t Pillar_U64;
 
-typedef int8_t pil_i8;
-typedef int16_t pil_i16;
-typedef int32_t pil_i32;
-typedef int64_t pil_i64;
+typedef int8_t Pillar_I8;
+typedef int16_t Pillar_I16;
+typedef int32_t Pillar_I32;
+typedef int64_t Pillar_i64;
 
-typedef float pil_f32;
-typedef double pil_f64;
+typedef float Pillar_F32;
+typedef double Pillar_F64;
 
-typedef uintptr_t pil_uptr;
-typedef intptr_t pil_iptr;
-typedef size_t pil_usize;
+typedef uintptr_t Pillar_Uptr;
+typedef intptr_t Pillar_Iptr;
+typedef size_t Pillar_Usize;
 
 enum Pillar_Alignment {
   PILLAR_ALIGNMENT_1SHL0 = PILLAR_ONE << PILLAR_ZERO,  // 1
@@ -30,15 +30,17 @@ enum Pillar_Alignment {
   PILLAR_ALIGNMENT_1SHL4 = PILLAR_ONE << PILLAR_FOUR,  // 16
 };
 
-enum Pillar_Alignment pillar_alignment_map(pil_usize align);
-enum Pillar_Alignment pillar_alignment_for(pil_usize size);
+enum Pillar_Alignment pillar_alignment_map(Pillar_Usize align);
+enum Pillar_Alignment pillar_alignment_for(Pillar_Usize size);
 
-pil_usize pillar_align_up(pil_usize value, enum Pillar_Alignment alignment);
-pil_usize pillar_align_down(pil_usize value, enum Pillar_Alignment alignment);
-bool pillar_is_aligned(pil_usize value, enum Pillar_Alignment alignment);
+Pillar_Usize pillar_align_up(Pillar_Usize value,
+                             enum Pillar_Alignment alignment);
+Pillar_Usize pillar_align_down(Pillar_Usize value,
+                               enum Pillar_Alignment alignment);
+bool pillar_is_aligned(Pillar_Usize value, enum Pillar_Alignment alignment);
 
 struct Pillar_Layout {
-  pil_u64 size;
+  Pillar_U64 size;
   enum Pillar_Alignment alignment;
 };
 
