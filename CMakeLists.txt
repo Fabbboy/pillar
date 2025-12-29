@@ -51,3 +51,8 @@ set_target_properties(pillar-c PROPERTIES LINKER_LANGUAGE C)
 add_library(pillar-cxx STATIC ${PILLAR_CXX_SOURCES})
 set_target_properties(pillar-cxx PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(pillar-cxx pillar-c)
+
+option(ENABLE_TESTS "enable tests" OFF)
+if(${ENABLE_TESTS})
+    add_subdirectory(tests)
+endif()
