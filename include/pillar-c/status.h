@@ -3,9 +3,9 @@
 #include "constants.h"
 #include "types.h"
 
-const Pillar_U16 PILLAR_SYSTEM_DOMAIN = __LINE__;
-const Pillar_U16 PILLAR_ALLOCATOR_DOMAIN = __LINE__;
-const Pillar_U16 PILLAR_VEC_DOMAIN = __LINE__;
+static const Pillar_U16 PILLAR_SYSTEM_DOMAIN = __LINE__;
+static const Pillar_U16 PILLAR_ALLOCATOR_DOMAIN = __LINE__;
+static const Pillar_U16 PILLAR_VEC_DOMAIN = __LINE__;
 
 enum {
   PILLAR_STATUS_OK = PILLAR_ZERO,

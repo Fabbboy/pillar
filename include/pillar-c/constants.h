@@ -2,6 +2,11 @@
 
 #include <limits.h>
 
+#ifdef __cplusplus
+  #define _Static_assert static_assert
+  #define _Alignof alignof
+#endif
+
 enum {
   PILLAR_INVFD = -1,
 

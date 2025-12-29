@@ -5,17 +5,17 @@
 
 static inline Pillar_Usize
 pillar_raw_vec_offset(const struct Pillar_RawVec *vec, Pillar_Usize index) {
-  return index * vec->layout.size;
+  return index * vec->element_size;
 }
 
 static inline Pillar_Usize
 pillar_raw_vec_cap_bytes(const struct Pillar_RawVec *vec) {
-  return vec->cap * vec->layout.size;
+  return vec->cap * vec->element_size;
 }
 
 static inline Pillar_Usize
 pillar_raw_vec_len_bytes(const struct Pillar_RawVec *vec) {
-  return vec->len * vec->layout.size;
+  return vec->len * vec->element_size;
 }
 
 static inline Pillar_Usize pillar_raw_vec_new_cap(Pillar_Usize desired_cap) {
@@ -39,7 +39,8 @@ struct Pillar_Status pillar_raw_vec_init_with(struct Pillar_RawVec *vec,
 
   vec->len = PILLAR_ZERO;
   vec->cap = cap;
-  vec->layout = layout;
+  vec->element_size = layout.size;
+  vec->layout = total_layout;
   vec->allocator = allocator;
   return pillar_status_ok();
 }
@@ -59,7 +60,7 @@ struct Pillar_Status pillar_raw_vec_grow(struct Pillar_RawVec *vec,
   if (new_cap <= vec->cap)
     return pillar_status_ok();
 
-  Pillar_Usize new_cap_bytes = vec->layout.size * new_cap;
+  Pillar_Usize new_cap_bytes = vec->element_size * new_cap;
   struct Pillar_Layout new_layout =
       PILLAR_LAYOUT_COPY(vec->layout, new_cap_bytes);
   Pillar_U8 *new_data;
@@ -72,10 +73,7 @@ struct Pillar_Status pillar_raw_vec_grow(struct Pillar_RawVec *vec,
   Pillar_Usize len_bytes = pillar_raw_vec_len_bytes(vec);
   memcpy(new_data, vec->data, len_bytes);
 
-  Pillar_Usize old_cap_bytes = pillar_raw_vec_cap_bytes(vec);
-  struct Pillar_Layout old_layout =
-      PILLAR_LAYOUT_COPY(vec->layout, old_cap_bytes);
-  pillar_allocator_dealloc(&vec->allocator, vec->data, old_layout);
+  pillar_allocator_dealloc(&vec->allocator, vec->data, vec->layout);
 
   vec->data = new_data;
   vec->cap = new_cap;
@@ -92,10 +90,7 @@ struct Pillar_Status pillar_raw_vec_shrink(struct Pillar_RawVec *vec) {
     return pillar_status_ok();
 
   if (vec->len == PILLAR_ZERO) {
-    Pillar_Usize cap_bytes = pillar_raw_vec_cap_bytes(vec);
-    struct Pillar_Layout old_layout =
-        PILLAR_LAYOUT_COPY(vec->layout, cap_bytes);
-    pillar_allocator_dealloc(&vec->allocator, vec->data, old_layout);
+    pillar_allocator_dealloc(&vec->allocator, vec->data, vec->layout);
     vec->data = NULL;
     vec->cap = PILLAR_ZERO;
     vec->layout = PILLAR_LAYOUT_COPY(vec->layout, PILLAR_ZERO);
@@ -113,9 +108,7 @@ struct Pillar_Status pillar_raw_vec_shrink(struct Pillar_RawVec *vec) {
 
   memcpy(new_data, vec->data, len_bytes);
 
-  Pillar_Usize cap_bytes = pillar_raw_vec_cap_bytes(vec);
-  struct Pillar_Layout old_layout = PILLAR_LAYOUT_COPY(vec->layout, cap_bytes);
-  pillar_allocator_dealloc(&vec->allocator, vec->data, old_layout);
+  pillar_allocator_dealloc(&vec->allocator, vec->data, vec->layout);
 
   vec->data = new_data;
   vec->cap = vec->len;
@@ -137,7 +130,7 @@ struct Pillar_Status pillar_raw_vec_append(struct Pillar_RawVec *vec,
   }
 
   Pillar_Usize offset = pillar_raw_vec_offset(vec, vec->len);
-  memcpy(vec->data + offset, item, vec->layout.size);
+  memcpy(vec->data + offset, item, vec->element_size);
   vec->len++;
 
   return pillar_status_ok();
@@ -153,7 +146,7 @@ struct Pillar_Status pillar_raw_vec_pop(struct Pillar_RawVec *vec,
 
   vec->len--;
   Pillar_Usize offset = pillar_raw_vec_offset(vec, vec->len);
-  memcpy(out, vec->data + offset, vec->layout.size);
+  memcpy(out, vec->data + offset, vec->element_size);
 
   return pillar_status_ok();
 }
@@ -171,8 +164,8 @@ struct Pillar_Status pillar_raw_vec_prepend(struct Pillar_RawVec *vec,
   }
 
   Pillar_Usize shift_bytes = pillar_raw_vec_len_bytes(vec);
-  memmove(vec->data + vec->layout.size, vec->data, shift_bytes);
-  memcpy(vec->data, item, vec->layout.size);
+  memmove(vec->data + vec->element_size, vec->data, shift_bytes);
+  memcpy(vec->data, item, vec->element_size);
   vec->len++;
 
   return pillar_status_ok();
@@ -186,11 +179,11 @@ struct Pillar_Status pillar_raw_vec_shift(struct Pillar_RawVec *vec,
   if (vec->len == PILLAR_ZERO)
     return PILLAR_VEC_STATUS(PILLAR_VEC_CODE_OUT_OF_BOUNDS);
 
-  memcpy(out, vec->data, vec->layout.size);
+  memcpy(out, vec->data, vec->element_size);
   vec->len--;
 
   Pillar_Usize shift_bytes = pillar_raw_vec_len_bytes(vec);
-  memmove(vec->data, vec->data + vec->layout.size, shift_bytes);
+  memmove(vec->data, vec->data + vec->element_size, shift_bytes);
 
   return pillar_status_ok();
 }

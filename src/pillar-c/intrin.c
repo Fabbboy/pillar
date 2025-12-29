@@ -91,12 +91,7 @@ Pillar_Usize pillar_ppow2(Pillar_Usize value) {
 
   Pillar_Usize leading_zeros = pillar_leading_zeros(value);
   Pillar_Usize bits = PILLAR_BITS(Pillar_Usize);
-  Pillar_Usize shift = bits - leading_zeros;
+  Pillar_Usize shift = bits - leading_zeros - PILLAR_ONE;
 
-  Pillar_Usize pow2 = PILLAR_ONE << shift;
-
-  if (pow2 == value)
-    return pow2;
-
-  return pow2 << PILLAR_ONE;
+  return PILLAR_ONE << shift;
 }

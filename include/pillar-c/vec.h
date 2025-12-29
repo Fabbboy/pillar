@@ -4,8 +4,8 @@
 #include "pillar-c/status.h"
 #include "pillar-c/types.h"
 
-const Pillar_Usize PILLAR_VEC_GROWTH = 2;
-const Pillar_Usize PILLAR_VEC_MIN = 4;
+static const Pillar_Usize PILLAR_VEC_GROWTH = 2;
+static const Pillar_Usize PILLAR_VEC_MIN = 4;
 
 enum Pillar_VecCode {
   PILLAR_VEC_CODE_OUT_OF_BOUNDS = PILLAR_STATUS_START,
@@ -18,12 +18,13 @@ struct Pillar_RawVec {
   Pillar_U8 *data;
   Pillar_Usize len;
   Pillar_Usize cap;
-  struct Pillar_Layout layout; // updated on every resize
+  Pillar_Usize element_size;
+  struct Pillar_Layout layout;
   struct Pillar_Allocator allocator;
 };
 
 #define PILLAR_RAW_VEC_INIT(ALLOCATOR, LAYOUT)                                 \
-  (struct Pillar_RawVec) { NULL, PILLAR_ZERO, PILLAR_ZERO, LAYOUT, ALLOCATOR }
+  (struct Pillar_RawVec) { NULL, PILLAR_ZERO, PILLAR_ZERO, (LAYOUT).size, LAYOUT, ALLOCATOR }
 
 struct Pillar_Status pillar_raw_vec_init_with(struct Pillar_RawVec *vec,
                                               struct Pillar_Layout layout,
